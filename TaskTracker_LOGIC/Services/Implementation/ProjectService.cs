@@ -56,14 +56,7 @@ namespace TaskTracker_LOGIC.Services.Implementation
                 query = query.Where(x => x.StartDate <= filter.CompletionDate);
             }
 
-            var list = query.Select(x => new GetProjectsVM
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Priority = x.Priority,
-                StartDate = x.StartDate,
-            }).ToList();
-            return list;
+            return _mapper.Map<List<GetProjectsVM>>(query);
         }
 
         public GetProjectByIdVM GetProjectById(int projectId)
