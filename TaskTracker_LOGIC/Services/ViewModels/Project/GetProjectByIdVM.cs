@@ -13,6 +13,6 @@ namespace TaskTracker_LOGIC.Services.ViewModels.Project
         public DateTime StartDate { get; set; }
         public ProjectPriority Priority { get; set; }
         public ProjectStatus Status { get; set; }
-        public ICollection<GetTrackingTaskByIdVM> TrackingTasks { get; set; }
+        public ICollection<GetTrackingTaskByIdVM> Tasks { get; set; }
     }
 }

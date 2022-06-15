@@ -8,6 +8,7 @@ namespace TaskTracker_LOGIC.Services.Interfaces
     {
         ICollection<Project> GetAllProjects();
         Project GetProjectById(int projectId);
+        bool UpdateStatus(Project project);
         bool ProjectExists(int id);
         bool CreateProject(Project project);
         bool UpdateProject(Project project);

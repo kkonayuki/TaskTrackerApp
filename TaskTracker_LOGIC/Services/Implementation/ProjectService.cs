@@ -14,10 +14,12 @@ namespace TaskTracker_LOGIC.Services.Implementation
     public class ProjectService : IProjectService
     {
         private readonly DatabaseContext _context;
+        private readonly IMapper _mapper;
 
-        public ProjectService(DatabaseContext context)
+        public ProjectService(DatabaseContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         public bool CreateProject(Project project)
         {
@@ -53,6 +55,12 @@ namespace TaskTracker_LOGIC.Services.Implementation
         }
 
         public bool UpdateProject(Project project)
+        {
+            _context.Update(project);
+            return Save();
+        }
+
+        public bool UpdateStatus(Project project)
         {
             _context.Update(project);
             return Save();

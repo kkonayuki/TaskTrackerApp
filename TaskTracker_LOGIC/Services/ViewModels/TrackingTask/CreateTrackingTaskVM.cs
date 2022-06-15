@@ -13,6 +13,5 @@ namespace TaskTracker_LOGIC.Services.ViewModels.TrackingTask
         public TrackingTaskStatus Status { get; set; }
         public string Description { get; set; }
         public TrackingTaskPriority Priority { get; set; }
-        public int ProjectId { get; set; }
     }
 }

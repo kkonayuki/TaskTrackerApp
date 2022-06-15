@@ -18,10 +18,13 @@ namespace TaskTracker_LOGIC.Helper
             CreateMap<Project, GetProjectByIdVM>();
             CreateMap<Project, GetProjectsVM>();
             CreateMap<Project, UpdateProjectVM>();
+            CreateMap<Project, UpdateProjectStatusVM>();
             CreateMap<CreateProjectVM, Project>();
             CreateMap<GetProjectByIdVM, Project>();
             CreateMap<GetProjectsVM, Project>();
             CreateMap<UpdateProjectVM, Project>();
+            CreateMap<UpdateProjectStatusVM, Project>();
+            
 
             CreateMap<TrackingTask, CreateTrackingTaskVM>();
             CreateMap<TrackingTask, GetTrackingTaskByIdVM>();

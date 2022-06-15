@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskTracker_DAL;
+using TaskTracker_DAL.Entities;
 using TaskTracker_LOGIC.Services.Interfaces;
 using TaskTracker_LOGIC.Services.ViewModels.TrackingTask;
 
@@ -10,44 +12,61 @@ namespace TaskTracker_LOGIC.Services.Implementation
 {
     public class TrackingTaskService : ITrackingTaskService
     {
-        public bool CreateProject(CreateTrackingTaskVM createTrackingTaskVm)
+        private readonly DatabaseContext _context;
+
+        public TrackingTaskService(DatabaseContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+        public bool CreateProject(TrackingTask createTrackingTask)
+        {
+            _context.Add(createTrackingTask);
+            return Save();
         }
 
-        public bool DeleteProject(int trackingTaskId)
+        public bool DeleteProject(TrackingTask trackingTask)
         {
-            throw new NotImplementedException();
+            _context.Remove(trackingTask);
+            return Save();
+
         }
 
-        public ICollection<GetTrackingTasksVM> GetAllTrackingTasks()
+        public ICollection<TrackingTask> GetAllTrackingTasks()
         {
-            throw new NotImplementedException();
+            return _context.TrackingTasks.OrderBy(t => t.Id).ToList();
         }
 
-        public GetTrackingTaskByIdVM GetTrackingTaskById(int trackingTaskId)
+        public TrackingTask GetTrackingTaskById(int trackingTaskId)
         {
-            throw new NotImplementedException();
+            return _context.TrackingTasks.FirstOrDefault(t => t.Id == trackingTaskId);
         }
 
-        public ICollection<GetTrackingTasksVM> GetTrackingTasksByProjectId(int id)
+        public ICollection<TrackingTask> GetTrackingTasksByProjectId(int id)
         {
-            throw new NotImplementedException();
+            return _context.TrackingTasks.OrderBy(t => t.Project.Id == id).ToList();
         }
 
-        public bool ProjectExists(int id)
+        public bool TrackingTaskExists(int id)
         {
-            throw new NotImplementedException();
+            return _context.TrackingTasks.Any(t => t.Id == id);
         }
 
         public bool Save()
         {
-            throw new NotImplementedException();
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
         }
 
-        public bool UpdateProject(UpdateTrackingTaskVM updateTrackingTaskVm)
+        public bool UpdateProject(TrackingTask updateTrackingTask)
         {
-            throw new NotImplementedException();
+            _context.Update(updateTrackingTask);
+            return Save();
+        }
+
+        public bool UpdateStatus(TrackingTask trackingTaskStatus)
+        {
+            _context.Update(trackingTaskStatus);
+            return Save();
         }
     }
 }
