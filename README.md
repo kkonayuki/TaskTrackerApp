@@ -20,5 +20,5 @@ Project
 4. Change the status of an existing project.
 
 ## Used technologies
-- Entity Framework
+- EntityFramework Core
 - AutoMapper
