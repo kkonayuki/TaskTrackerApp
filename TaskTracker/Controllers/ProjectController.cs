@@ -1,9 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using TaskTracker_DAL.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
 using TaskTracker_LOGIC.Services.Interfaces;
 using TaskTracker_LOGIC.Services.ViewModels.Project;
-using TaskTracker_LOGIC.Services.ViewModels.TrackingTask;
 
 namespace TaskTracker.Controllers
 {
@@ -12,14 +9,10 @@ namespace TaskTracker.Controllers
     public class ProjectController : ControllerBase
     {
         private readonly IProjectService _projectService;
-        private readonly ITrackingTaskService _taskService;
-        private readonly IMapper _mapper;
 
-        public ProjectController(IProjectService projectService,ITrackingTaskService taskService, IMapper mapper)
+        public ProjectController(IProjectService projectService)
         {
             _projectService = projectService;
-            _taskService = taskService;
-            _mapper = mapper;
         }
 
         [HttpGet("GetAll")]
@@ -27,7 +20,7 @@ namespace TaskTracker.Controllers
 
         public IActionResult GetProjects()
         {
-            var projects = _mapper.Map<List<GetProjectsVM>>(_projectService.GetAllProjects());
+            var projects = _projectService.GetAllProjects();
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -40,13 +33,7 @@ namespace TaskTracker.Controllers
 
         public IActionResult GetProject(int projectId)
         {
-            var project = _mapper.Map<GetProjectByIdVM>(_projectService.GetProjectById(projectId));
-            
-            foreach (var task in project.Tasks)
-            {
-                var kek = _mapper.Map<GetTrackingTaskByIdVM>(_taskService.GetTrackingTaskById(task.Id));
-                project.Tasks.Add(kek);
-            }
+            var project = _projectService.GetProjectById(projectId);
             
             if (project == null)
                 return NotFound();
@@ -65,8 +52,7 @@ namespace TaskTracker.Controllers
             if (projectCreate == null)
                 return BadRequest(ModelState);
 
-            var projectMap = _mapper.Map<Project>(projectCreate);
-            if (!_projectService.CreateProject(projectMap))
+            if (!_projectService.CreateProject(projectCreate))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);
@@ -94,9 +80,7 @@ namespace TaskTracker.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var projectMap = _mapper.Map<Project>(projectUpdate);
-
-            if (!_projectService.UpdateProject(projectMap))
+            if (!_projectService.UpdateProject(projectUpdate))
             {
                 ModelState.AddModelError("", "Something went wrong updating project");
                 return StatusCode(500, ModelState);
@@ -105,7 +89,7 @@ namespace TaskTracker.Controllers
             return NoContent();
         }
 
-        [HttpPut("UpdateStatus")]
+        [HttpPut("ProjectUpdateStatus")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
 
@@ -119,12 +103,8 @@ namespace TaskTracker.Controllers
 
             if (!ModelState.IsValid)
                 return BadRequest();
-            
-            var project = _projectService.GetProjectById(projectId);
-            
-            project.Status = projectStatus.Status;
 
-            if (!_projectService.UpdateStatus(project))
+            if (!_projectService.UpdateStatus(projectStatus, projectId))
             {
                 ModelState.AddModelError("", "Something went wrong updating Project Status");
                 return StatusCode(500, ModelState);
@@ -142,10 +122,8 @@ namespace TaskTracker.Controllers
         {
             if (!_projectService.ProjectExists(projectId))
                 return NotFound();
-            
-            var projectToDelete = _projectService.GetProjectById(projectId);
 
-            if (!_projectService.DeleteProject(projectToDelete))
+            if (!_projectService.DeleteProject(projectId))
             {
                 ModelState.AddModelError("", "Something went wrong deleting Project");
                 return BadRequest(ModelState);

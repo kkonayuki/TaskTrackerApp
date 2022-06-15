@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskTracker_DAL.Entities;
+﻿
 using TaskTracker_LOGIC.Services.ViewModels.TrackingTask;
 
 namespace TaskTracker_LOGIC.Services.Interfaces
 {
     public interface ITrackingTaskService
     {
-        ICollection<TrackingTask> GetAllTrackingTasks();
-        ICollection<TrackingTask> GetTrackingTasksByProjectId(int id);
-        TrackingTask GetTrackingTaskById(int trackingTaskId);
-        bool UpdateStatus(TrackingTask trackingTaskStatus);
+        ICollection<GetTrackingTasksVM> GetAllTrackingTasks();
+        ICollection<GetTrackingTaskByIdVM> GetTrackingTasksByProjectId(int id);
+        GetTrackingTaskByIdVM GetTrackingTaskById(int trackingTaskId);
+        bool UpdateStatus(UpdateTrackingTaskStatusVM trackingTaskStatus, int trackingTaskId);
         bool TrackingTaskExists(int id);
-        bool CreateProject(TrackingTask createTrackingTask);
-        bool UpdateProject(TrackingTask updateTrackingTask);
-        bool DeleteProject(TrackingTask trackingTask);
+        bool CreateTrackingTask(CreateTrackingTaskVM createTrackingTask, int projectId);
+        bool UpdateTrackingTask(UpdateTrackingTaskVM updateTrackingTask);
+        bool DeleteTrackingTask(int trackingTaskId);
         bool Save();
     }
 }

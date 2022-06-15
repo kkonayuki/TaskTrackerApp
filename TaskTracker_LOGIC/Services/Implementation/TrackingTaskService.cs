@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using TaskTracker_DAL;
 using TaskTracker_DAL.Entities;
 using TaskTracker_LOGIC.Services.Interfaces;
@@ -13,37 +9,42 @@ namespace TaskTracker_LOGIC.Services.Implementation
     public class TrackingTaskService : ITrackingTaskService
     {
         private readonly DatabaseContext _context;
+        private readonly IMapper _mapper;
 
-        public TrackingTaskService(DatabaseContext context)
+        public TrackingTaskService(DatabaseContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
-        public bool CreateProject(TrackingTask createTrackingTask)
+        public bool CreateTrackingTask(CreateTrackingTaskVM createTrackingTask, int projectId)
         {
-            _context.Add(createTrackingTask);
+            var taskMap = _mapper.Map<TrackingTask>(_context.Add(createTrackingTask));
+            taskMap.Project.Id = projectId;
+            _context.Add(taskMap);
             return Save();
         }
 
-        public bool DeleteProject(TrackingTask trackingTask)
+        public bool DeleteTrackingTask(int trackingTaskId)
         {
-            _context.Remove(trackingTask);
+            var deleteTask = _context.TrackingTasks.FirstOrDefault(p => p.Id == trackingTaskId);
+            _context.Remove(deleteTask);
             return Save();
 
         }
 
-        public ICollection<TrackingTask> GetAllTrackingTasks()
+        public ICollection<GetTrackingTasksVM> GetAllTrackingTasks()
         {
-            return _context.TrackingTasks.OrderBy(t => t.Id).ToList();
+            return _mapper.Map<List<GetTrackingTasksVM>>(_context.TrackingTasks.ToList());
         }
 
-        public TrackingTask GetTrackingTaskById(int trackingTaskId)
+        public GetTrackingTaskByIdVM GetTrackingTaskById(int trackingTaskId)
         {
-            return _context.TrackingTasks.FirstOrDefault(t => t.Id == trackingTaskId);
+            return _mapper.Map<GetTrackingTaskByIdVM>(_context.TrackingTasks.FirstOrDefault(t => t.Id == trackingTaskId));
         }
 
-        public ICollection<TrackingTask> GetTrackingTasksByProjectId(int id)
+        public ICollection<GetTrackingTaskByIdVM> GetTrackingTasksByProjectId(int id)
         {
-            return _context.TrackingTasks.OrderBy(t => t.Project.Id == id).ToList();
+            return _mapper.Map<List<GetTrackingTaskByIdVM>>(_context.TrackingTasks.OrderBy(t => t.Project.Id == id).ToList());
         }
 
         public bool TrackingTaskExists(int id)
@@ -57,15 +58,17 @@ namespace TaskTracker_LOGIC.Services.Implementation
             return saved > 0 ? true : false;
         }
 
-        public bool UpdateProject(TrackingTask updateTrackingTask)
+        public bool UpdateTrackingTask(UpdateTrackingTaskVM updateTrackingTask)
         {
-            _context.Update(updateTrackingTask);
+            _mapper.Map<UpdateTrackingTaskVM>(_context.Update(updateTrackingTask));
             return Save();
         }
 
-        public bool UpdateStatus(TrackingTask trackingTaskStatus)
+        public bool UpdateStatus(UpdateTrackingTaskStatusVM trackingTaskStatus, int trackingTaskId)
         {
-            _context.Update(trackingTaskStatus);
+            var updateTask = _context.TrackingTasks.FirstOrDefault(t => t.Id == trackingTaskId);
+            updateTask.Status = trackingTaskStatus.Status;
+            _context.Update(updateTask);
             return Save();
         }
     }

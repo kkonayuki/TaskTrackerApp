@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using TaskTracker_DAL.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
 using TaskTracker_LOGIC.Services.Interfaces;
 using TaskTracker_LOGIC.Services.ViewModels.TrackingTask;
 
@@ -13,13 +10,11 @@ namespace TaskTracker_API.Controllers
     {
         private readonly ITrackingTaskService _taskService;
         private readonly IProjectService _projectService;
-        private readonly IMapper _mapper;
 
-        public TrackingTaskController(ITrackingTaskService taskService,IProjectService projectService, IMapper mapper)
+        public TrackingTaskController(ITrackingTaskService taskService,IProjectService projectService)
         {
             _taskService = taskService;
             _projectService = projectService;
-            _mapper = mapper;
         }
 
         [HttpGet("GetAll")]
@@ -27,7 +22,7 @@ namespace TaskTracker_API.Controllers
 
         public IActionResult GetTrackingTasks()
         {
-            var tasks = _mapper.Map<List<GetTrackingTasksVM>>(_taskService.GetAllTrackingTasks());
+            var tasks = _taskService.GetAllTrackingTasks();
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -40,7 +35,7 @@ namespace TaskTracker_API.Controllers
 
         public IActionResult GetTrackingTask(int trackingTaskId)
         {
-            var trackingTask = _mapper.Map<GetTrackingTaskByIdVM>(_taskService.GetTrackingTaskById(trackingTaskId));
+            var trackingTask = _taskService.GetTrackingTaskById(trackingTaskId);
             if (trackingTask == null)
                 return NotFound();
 
@@ -59,17 +54,65 @@ namespace TaskTracker_API.Controllers
             if (trackingTaskCreate == null)
                 return BadRequest(ModelState);
 
-            var taskMap = _mapper.Map<TrackingTask>(trackingTaskCreate);
-
-            taskMap.Project = _projectService.GetProjectById(projectId);
-
-            if (!_taskService.CreateProject(taskMap))
+            if (!_taskService.CreateTrackingTask(trackingTaskCreate, projectId))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);
             }
 
             return Ok("Succesfully Created");
+        }
+
+        [HttpPut("Update")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+
+        public IActionResult UpdateTrackingTask(int trackingTaskId, [FromBody] UpdateTrackingTaskVM trackingTaskUpdate)
+        {
+            if (trackingTaskUpdate == null)
+                return BadRequest(ModelState);
+
+            if (trackingTaskId != trackingTaskUpdate.Id)
+                return BadRequest(ModelState);
+
+            if (!_taskService.TrackingTaskExists(trackingTaskId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_taskService.UpdateTrackingTask(trackingTaskUpdate))
+            {
+                ModelState.AddModelError("", "Something went wrong updating Task");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("TaskUpdateStatus")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+
+        public IActionResult UpdateTrackingTaskStatus(int trackingTaskId, [FromBody] UpdateTrackingTaskStatusVM updateStatusTask)
+        {
+            if (updateStatusTask == null)
+                return BadRequest(ModelState);
+
+            if (!_taskService.TrackingTaskExists(trackingTaskId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            if (!_taskService.UpdateStatus(updateStatusTask, trackingTaskId))
+            {
+                ModelState.AddModelError("", "Something went wrong updating Task Status");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
         }
     }
 }

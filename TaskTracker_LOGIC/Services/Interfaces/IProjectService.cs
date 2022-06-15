@@ -6,13 +6,13 @@ namespace TaskTracker_LOGIC.Services.Interfaces
 {
     public interface IProjectService
     {
-        ICollection<Project> GetAllProjects();
-        Project GetProjectById(int projectId);
-        bool UpdateStatus(Project project);
+        ICollection<GetProjectsVM> GetAllProjects();
+        GetProjectByIdVM GetProjectById(int projectId);
+        bool UpdateStatus(UpdateProjectStatusVM project, int projectId);
         bool ProjectExists(int id);
-        bool CreateProject(Project project);
-        bool UpdateProject(Project project);
-        bool DeleteProject(Project project);
+        bool CreateProject(CreateProjectVM project);
+        bool UpdateProject(UpdateProjectVM project);
+        bool DeleteProject(int projectId);
         bool Save();
     }
 }

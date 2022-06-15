@@ -21,26 +21,28 @@ namespace TaskTracker_LOGIC.Services.Implementation
             _context = context;
             _mapper = mapper;
         }
-        public bool CreateProject(Project project)
+        public bool CreateProject(CreateProjectVM project)
         {
-            _context.Add(project);
+            var projectMap = _mapper.Map<Project>(project);
+            _context.Add(projectMap);
             return Save();
         }
 
-        public bool DeleteProject(Project project)
+        public bool DeleteProject(int projectId)
         {
-            _context.Remove(project);
+            var deleteProject = _context.Projects.FirstOrDefault(p => p.Id == projectId);
+            _context.Remove(deleteProject);
             return Save();
         }
 
-        public ICollection<Project> GetAllProjects()
+        public ICollection<GetProjectsVM> GetAllProjects()
         {
-            return _context.Projects.OrderBy(p => p.Id).ToList();
+            return _mapper.Map<List<GetProjectsVM>>(_context.Projects.ToList());
         }
 
-        public Project GetProjectById(int projectId)
+        public GetProjectByIdVM GetProjectById(int projectId)
         {
-            return _context.Projects.FirstOrDefault(p => p.Id == projectId);
+            return _mapper.Map<GetProjectByIdVM>(_context.Projects.FirstOrDefault(p => p.Id == projectId));
         }
 
         public bool ProjectExists(int id)
@@ -54,15 +56,17 @@ namespace TaskTracker_LOGIC.Services.Implementation
             return saved > 0 ? true : false;
         }
 
-        public bool UpdateProject(Project project)
+        public bool UpdateProject(UpdateProjectVM project)
         {
-            _context.Update(project);
+            _mapper.Map<UpdateProjectVM>(_context.Update(project));
             return Save();
         }
 
-        public bool UpdateStatus(Project project)
+        public bool UpdateStatus(UpdateProjectStatusVM project, int projectId)
         {
-            _context.Update(project);
+            var projectStatus = _context.Projects.FirstOrDefault(p => p.Id == projectId);
+            projectStatus.Status = project.Status;
+            _context.Update(projectStatus);
             return Save();
         }
     }

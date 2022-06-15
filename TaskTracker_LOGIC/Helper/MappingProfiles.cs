@@ -1,9 +1,4 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskTracker_DAL.Entities;
 using TaskTracker_LOGIC.Services.ViewModels.Project;
 using TaskTracker_LOGIC.Services.ViewModels.TrackingTask;
@@ -30,10 +25,12 @@ namespace TaskTracker_LOGIC.Helper
             CreateMap<TrackingTask, GetTrackingTaskByIdVM>();
             CreateMap<TrackingTask, GetTrackingTasksVM>();
             CreateMap<TrackingTask, UpdateTrackingTaskVM>();
+            CreateMap<TrackingTask, UpdateTrackingTaskStatusVM>();
             CreateMap<CreateTrackingTaskVM, TrackingTask>();
             CreateMap<GetTrackingTaskByIdVM, TrackingTask>();
             CreateMap<GetTrackingTasksVM, TrackingTask>();
             CreateMap<UpdateTrackingTaskVM, TrackingTask>();
+            CreateMap<UpdateTrackingTaskStatusVM, TrackingTask>();
 
         }
     }
