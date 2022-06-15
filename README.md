@@ -22,3 +22,6 @@ Project
 ## Used technologies
 - EntityFramework Core
 - AutoMapper
+
+## Testing
+> Still learning.
