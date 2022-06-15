@@ -114,5 +114,24 @@ namespace TaskTracker_API.Controllers
 
             return NoContent();
         }
+
+        [HttpDelete("Delete")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+
+        public IActionResult TrackingTaskDelete(int trackingTaskId)
+        {
+            if (!_taskService.TrackingTaskExists(trackingTaskId))
+                return NotFound();
+
+            if (!_taskService.DeleteTrackingTask(trackingTaskId))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting Task");
+                return BadRequest(ModelState);
+            }
+
+            return NoContent();
+        }
     }
 }

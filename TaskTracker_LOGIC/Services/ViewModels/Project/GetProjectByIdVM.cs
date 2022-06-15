@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using TaskTracker_DAL.Enums;
 using TaskTracker_LOGIC.Services.ViewModels.TrackingTask;
 

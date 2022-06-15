@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskTracker_LOGIC.Services.Interfaces;
 using TaskTracker_LOGIC.Services.ViewModels.Project;
+using TaskTracker_LOGIC.Services.ViewModels.Project.ProjectQuery;
 
 namespace TaskTracker.Controllers
 {
@@ -18,9 +19,9 @@ namespace TaskTracker.Controllers
         [HttpGet("GetAll")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<GetProjectsVM>))]
 
-        public IActionResult GetProjects()
+        public IActionResult GetProjects([FromQuery] GetProjectsQueryVM filter)
         {
-            var projects = _projectService.GetAllProjects();
+            var projects = _projectService.GetAllProjects(filter);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
